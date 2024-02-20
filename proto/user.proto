@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+option go_package="go-project/proto";
+
+package proto;
+
+service UserService {
+  rpc Create(CreateUserRequest) returns (UserResponse);
+  rpc Get(GetUserRequest) returns (UserResponse);
+  rpc Update(UpdateUserRequest) returns (UserResponse);
+}
+
+message User {
+  uint64 id = 1;
+  string name = 2;
+  uint32 age = 3;
+  string token = 4;
+}
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+message UserResponse {
+  User user = 1;
+  string message = 2;
+}
+
+message GetUserRequest {
+  uint64 id = 1;
+}
+
+message UpdateUserRequest {
+  User user = 1;
+}
+
+// protoc -Iproto --go_out=.  --go_opt=module=go-project --go-grpc_out=. --go-grpc_opt=module=go-project proto/user.proto
