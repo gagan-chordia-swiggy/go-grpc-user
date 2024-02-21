@@ -12,13 +12,14 @@ import (
 )
 
 type User struct {
-	Id    uint64 `json:"id"`
-	Name  string `json:"name"`
-	Age   uint32 `json:"age"`
-	Token string `json:"token"`
+	Id       uint64 `json:"id"`
+	Name     string `json:"name"`
+	Age      uint32 `json:"age"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
-var address = ":8543"
+var address = ":8544"
 var baseUrl = "/api/v1/users"
 
 func main() {
@@ -45,8 +46,8 @@ func CreateUser(client proto.UserServiceClient, w http.ResponseWriter, r *http.R
 	json.NewDecoder(r.Body).Decode(&usr)
 
 	user := &proto.User{
-		Name: usr.Name,
-		Age:  usr.Age,
+		Username: usr.Username,
+		Password: usr.Password,
 	}
 
 	res, err := client.Create(context.Background(), &proto.CreateUserRequest{

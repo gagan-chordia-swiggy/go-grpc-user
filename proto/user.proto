@@ -6,6 +6,7 @@ package proto;
 
 service UserService {
   rpc Create(CreateUserRequest) returns (UserResponse);
+  rpc AddName(CreateUserRequest) returns (UserResponse);
   rpc Get(GetUserRequest) returns (UserResponse);
   rpc Update(UpdateUserRequest) returns (UserResponse);
 }
@@ -13,8 +14,9 @@ service UserService {
 message User {
   uint64 id = 1;
   string name = 2;
-  uint32 age = 3;
-  string token = 4;
+  string username = 3;
+  string password = 4;
+  uint32 age = 5;
 }
 
 message CreateUserRequest {

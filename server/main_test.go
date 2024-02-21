@@ -29,8 +29,8 @@ func TestServer_CreateUser(t *testing.T) {
 	}
 	req := &proto.CreateUserRequest{
 		User: &proto.User{
-			Name: "John",
-			Age:  12,
+			Username: "john",
+			Password: "abc123",
 		},
 	}
 	expectedMessage := "User created successfully"

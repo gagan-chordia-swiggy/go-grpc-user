@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"go-project/proto"
@@ -11,7 +10,6 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"net"
-	"strconv"
 )
 
 type Server struct {
@@ -20,13 +18,15 @@ type Server struct {
 }
 
 type User struct {
-	Id    uint64 `json:"id"`
-	Name  string `json:"name"`
-	Age   uint32 `json:"age"`
-	Token string `json:"token"`
+	gorm.Model
+	Id       uint64 `json:"id"`
+	Name     string `json:"name"`
+	Age      uint32 `json:"age"`
+	Username string `json:"username" gorm:"unique"`
+	Password string `json:"password"`
 }
 
-var address = ":8543"
+var address = ":8544"
 
 func DatabaseConnection() *gorm.DB {
 	host := "localhost"
@@ -78,15 +78,11 @@ func main() {
 func (s *Server) Create(_ context.Context, req *proto.CreateUserRequest) (*proto.UserResponse, error) {
 	usr := req.User
 	user := User{
-		Name: usr.Name,
-		Age:  usr.Age,
+		Name:     "",
+		Username: usr.Username,
+		Password: usr.Password,
+		Age:      0,
 	}
-
-	auth := usr.Name + ":" + strconv.Itoa(int(usr.Age))
-	token := base64.StdEncoding.EncodeToString([]byte(auth))
-
-	user.Token = token
-	usr.Token = token
 
 	res := s.DB.Create(&user)
 
