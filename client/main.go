@@ -38,6 +38,9 @@ func main() {
 	router.HandleFunc(baseUrl, func(w http.ResponseWriter, r *http.Request) {
 		GetUser(client, w, r)
 	}).Methods("GET")
+	router.HandleFunc(baseUrl, func(w http.ResponseWriter, r *http.Request) {
+		UpdateUser(client, w, r)
+	}).Methods("PUT")
 
 	http.ListenAndServe(":8989", router)
 }
@@ -139,6 +142,53 @@ func GetUser(client proto.UserServiceClient, w http.ResponseWriter, r *http.Requ
 
 	res, err := client.Get(context.Background(), &proto.UserRequest{
 		User: usr,
+	})
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(res)
+}
+
+func UpdateUser(client proto.UserServiceClient, w http.ResponseWriter, r *http.Request) {
+	username, password, ok := r.BasicAuth()
+	if username == "" || password == "" || !ok {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+	}
+
+	db := database.DatabaseConnection()
+
+	user, err := database.GetUserByUsername(db, username)
+
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode("Wrong credentials")
+		return
+	}
+
+	if !reflect.DeepEqual(user.Password, password) {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode("Wrong credentials")
+		return
+	}
+
+	var usr models.User
+	json.NewDecoder(r.Body).Decode(&usr)
+
+	u := &proto.User{
+		Id:       user.Id,
+		Name:     usr.Name,
+		Username: username,
+		Password: password,
+		Age:      user.Age,
+	}
+
+	res, err := client.Update(context.Background(), &proto.UserRequest{
+		User: u,
 	})
 
 	if err != nil {
