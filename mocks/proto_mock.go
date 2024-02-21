@@ -36,6 +36,26 @@ func (m *MockUserServiceClient) EXPECT() *MockUserServiceClientMockRecorder {
 	return m.recorder
 }
 
+// AddName mocks base method.
+func (m *MockUserServiceClient) AddName(ctx context.Context, in *proto.CreateUserRequest, opts ...grpc.CallOption) (*proto.UserResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "AddName", varargs...)
+	ret0, _ := ret[0].(*proto.UserResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddName indicates an expected call of AddName.
+func (mr *MockUserServiceClientMockRecorder) AddName(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddName", reflect.TypeOf((*MockUserServiceClient)(nil).AddName), varargs...)
+}
+
 // Create mocks base method.
 func (m *MockUserServiceClient) Create(ctx context.Context, in *proto.CreateUserRequest, opts ...grpc.CallOption) (*proto.UserResponse, error) {
 	m.ctrl.T.Helper()
@@ -117,6 +137,21 @@ func NewMockUserServiceServer(ctrl *gomock.Controller) *MockUserServiceServer {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockUserServiceServer) EXPECT() *MockUserServiceServerMockRecorder {
 	return m.recorder
+}
+
+// AddName mocks base method.
+func (m *MockUserServiceServer) AddName(arg0 context.Context, arg1 *proto.CreateUserRequest) (*proto.UserResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddName", arg0, arg1)
+	ret0, _ := ret[0].(*proto.UserResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddName indicates an expected call of AddName.
+func (mr *MockUserServiceServerMockRecorder) AddName(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddName", reflect.TypeOf((*MockUserServiceServer)(nil).AddName), arg0, arg1)
 }
 
 // Create mocks base method.

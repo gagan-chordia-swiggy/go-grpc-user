@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"errors"
-	"fmt"
+	"go-project/database"
+	"go-project/models"
 	"go-project/proto"
 	"google.golang.org/grpc"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
 	"net"
@@ -17,43 +17,7 @@ type Server struct {
 	proto.UserServiceServer
 }
 
-type User struct {
-	gorm.Model
-	Id       uint64 `json:"id"`
-	Name     string `json:"name"`
-	Age      uint32 `json:"age"`
-	Username string `json:"username" gorm:"unique"`
-	Password string `json:"password"`
-}
-
-var address = ":8544"
-
-func DatabaseConnection() *gorm.DB {
-	host := "localhost"
-	port := 5432
-	user := "postgres"
-	password := "root1234"
-	dbName := "postgres"
-
-	connectionString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbName)
-
-	db, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
-
-	if err != nil {
-		log.Fatalln("Error connecting to the database")
-	}
-
-	log.Print("Connected to the database")
-
-	err = db.AutoMigrate(&User{})
-
-	if err != nil {
-		log.Fatalln("Error migrating the database")
-	}
-
-	return db
-}
+var address = ":8545"
 
 func main() {
 	lis, err := net.Listen("tcp", address)
@@ -65,7 +29,7 @@ func main() {
 	log.Printf("Listening to: %v\n", address)
 
 	server := grpc.NewServer()
-	db := DatabaseConnection()
+	db := database.DatabaseConnection()
 	proto.RegisterUserServiceServer(server, &Server{DB: db})
 
 	err = server.Serve(lis)
@@ -77,11 +41,9 @@ func main() {
 
 func (s *Server) Create(_ context.Context, req *proto.CreateUserRequest) (*proto.UserResponse, error) {
 	usr := req.User
-	user := User{
-		Name:     "",
+	user := models.User{
 		Username: usr.Username,
 		Password: usr.Password,
-		Age:      0,
 	}
 
 	res := s.DB.Create(&user)
@@ -93,6 +55,30 @@ func (s *Server) Create(_ context.Context, req *proto.CreateUserRequest) (*proto
 	response := &proto.UserResponse{
 		User:    usr,
 		Message: "User created successfully",
+	}
+
+	return response, nil
+}
+
+func (s *Server) AddName(_ context.Context, req *proto.CreateUserRequest) (*proto.UserResponse, error) {
+	usr := req.User
+	user := models.User{
+		Id:       usr.Id,
+		Username: usr.Username,
+		Password: usr.Password,
+		Name:     usr.Name,
+		Age:      usr.Age,
+	}
+
+	res := s.DB.Save(&user)
+
+	if res.RowsAffected == 0 {
+		return nil, errors.New("user update unsuccessful")
+	}
+
+	response := &proto.UserResponse{
+		User:    usr,
+		Message: "User updated",
 	}
 
 	return response, nil
