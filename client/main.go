@@ -9,7 +9,6 @@ import (
 	"go-project/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"reflect"
@@ -36,6 +35,9 @@ func main() {
 	router.HandleFunc(baseUrl+"/add", func(w http.ResponseWriter, r *http.Request) {
 		AddNameAndAge(client, w, r)
 	}).Methods("POST")
+	router.HandleFunc(baseUrl, func(w http.ResponseWriter, r *http.Request) {
+		GetUser(client, w, r)
+	}).Methods("GET")
 
 	http.ListenAndServe(":8989", router)
 }
@@ -49,7 +51,7 @@ func CreateUser(client proto.UserServiceClient, w http.ResponseWriter, r *http.R
 		Password: usr.Password,
 	}
 
-	res, err := client.Create(context.Background(), &proto.CreateUserRequest{
+	res, err := client.Create(context.Background(), &proto.UserRequest{
 		User: user,
 	})
 
@@ -71,7 +73,7 @@ func AddNameAndAge(client proto.UserServiceClient, w http.ResponseWriter, r *htt
 
 	db := database.DatabaseConnection()
 
-	user, err := getUserByUsername(db, username)
+	user, err := database.GetUserByUsername(db, username)
 
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -95,7 +97,7 @@ func AddNameAndAge(client proto.UserServiceClient, w http.ResponseWriter, r *htt
 		Age:      usr.Age,
 	}
 
-	res, err := client.AddName(context.Background(), &proto.CreateUserRequest{
+	res, err := client.AddName(context.Background(), &proto.UserRequest{
 		User: u,
 	})
 
@@ -109,13 +111,42 @@ func AddNameAndAge(client proto.UserServiceClient, w http.ResponseWriter, r *htt
 	json.NewEncoder(w).Encode(res)
 }
 
-func getUserByUsername(db *gorm.DB, username string) (*models.User, error) {
-	var user models.User
-	err := db.Where("username = ?", username).Find(&user).Error
-
-	if err != nil {
-		return nil, err
+func GetUser(client proto.UserServiceClient, w http.ResponseWriter, r *http.Request) {
+	username, password, ok := r.BasicAuth()
+	if username == "" || password == "" || !ok {
+		w.WriteHeader(http.StatusUnprocessableEntity)
 	}
 
-	return &user, nil
+	db := database.DatabaseConnection()
+
+	user, err := database.GetUserByUsername(db, username)
+
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode("Wrong credentials")
+		return
+	}
+
+	if !reflect.DeepEqual(user.Password, password) {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode("Wrong credentials")
+		return
+	}
+
+	usr := &proto.User{
+		Username: user.Username,
+	}
+
+	res, err := client.Get(context.Background(), &proto.UserRequest{
+		User: usr,
+	})
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(res)
 }

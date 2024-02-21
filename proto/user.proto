@@ -5,10 +5,10 @@ option go_package="go-project/proto";
 package proto;
 
 service UserService {
-  rpc Create(CreateUserRequest) returns (UserResponse);
-  rpc AddName(CreateUserRequest) returns (UserResponse);
-  rpc Get(GetUserRequest) returns (UserResponse);
-  rpc Update(UpdateUserRequest) returns (UserResponse);
+  rpc Create(UserRequest) returns (UserResponse);
+  rpc AddName(UserRequest) returns (UserResponse);
+  rpc Get(UserRequest) returns (UserResponse);
+  rpc Update(UserRequest) returns (UserResponse);
 }
 
 message User {
@@ -19,21 +19,13 @@ message User {
   uint32 age = 5;
 }
 
-message CreateUserRequest {
+message UserRequest {
   User user = 1;
 }
 
 message UserResponse {
   User user = 1;
   string message = 2;
-}
-
-message GetUserRequest {
-  uint64 id = 1;
-}
-
-message UpdateUserRequest {
-  User user = 1;
 }
 
 // protoc -Iproto --go_out=.  --go_opt=module=go-project --go-grpc_out=. --go-grpc_opt=module=go-project proto/user.proto

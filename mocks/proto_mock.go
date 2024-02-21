@@ -37,7 +37,7 @@ func (m *MockUserServiceClient) EXPECT() *MockUserServiceClientMockRecorder {
 }
 
 // AddName mocks base method.
-func (m *MockUserServiceClient) AddName(ctx context.Context, in *proto.CreateUserRequest, opts ...grpc.CallOption) (*proto.UserResponse, error) {
+func (m *MockUserServiceClient) AddName(ctx context.Context, in *proto.UserRequest, opts ...grpc.CallOption) (*proto.UserResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -57,7 +57,7 @@ func (mr *MockUserServiceClientMockRecorder) AddName(ctx, in interface{}, opts .
 }
 
 // Create mocks base method.
-func (m *MockUserServiceClient) Create(ctx context.Context, in *proto.CreateUserRequest, opts ...grpc.CallOption) (*proto.UserResponse, error) {
+func (m *MockUserServiceClient) Create(ctx context.Context, in *proto.UserRequest, opts ...grpc.CallOption) (*proto.UserResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -77,7 +77,7 @@ func (mr *MockUserServiceClientMockRecorder) Create(ctx, in interface{}, opts ..
 }
 
 // Get mocks base method.
-func (m *MockUserServiceClient) Get(ctx context.Context, in *proto.GetUserRequest, opts ...grpc.CallOption) (*proto.UserResponse, error) {
+func (m *MockUserServiceClient) Get(ctx context.Context, in *proto.UserRequest, opts ...grpc.CallOption) (*proto.UserResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -97,7 +97,7 @@ func (mr *MockUserServiceClientMockRecorder) Get(ctx, in interface{}, opts ...in
 }
 
 // Update mocks base method.
-func (m *MockUserServiceClient) Update(ctx context.Context, in *proto.UpdateUserRequest, opts ...grpc.CallOption) (*proto.UserResponse, error) {
+func (m *MockUserServiceClient) Update(ctx context.Context, in *proto.UserRequest, opts ...grpc.CallOption) (*proto.UserResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -140,7 +140,7 @@ func (m *MockUserServiceServer) EXPECT() *MockUserServiceServerMockRecorder {
 }
 
 // AddName mocks base method.
-func (m *MockUserServiceServer) AddName(arg0 context.Context, arg1 *proto.CreateUserRequest) (*proto.UserResponse, error) {
+func (m *MockUserServiceServer) AddName(arg0 context.Context, arg1 *proto.UserRequest) (*proto.UserResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddName", arg0, arg1)
 	ret0, _ := ret[0].(*proto.UserResponse)
@@ -155,7 +155,7 @@ func (mr *MockUserServiceServerMockRecorder) AddName(arg0, arg1 interface{}) *go
 }
 
 // Create mocks base method.
-func (m *MockUserServiceServer) Create(arg0 context.Context, arg1 *proto.CreateUserRequest) (*proto.UserResponse, error) {
+func (m *MockUserServiceServer) Create(arg0 context.Context, arg1 *proto.UserRequest) (*proto.UserResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", arg0, arg1)
 	ret0, _ := ret[0].(*proto.UserResponse)
@@ -170,7 +170,7 @@ func (mr *MockUserServiceServerMockRecorder) Create(arg0, arg1 interface{}) *gom
 }
 
 // Get mocks base method.
-func (m *MockUserServiceServer) Get(arg0 context.Context, arg1 *proto.GetUserRequest) (*proto.UserResponse, error) {
+func (m *MockUserServiceServer) Get(arg0 context.Context, arg1 *proto.UserRequest) (*proto.UserResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", arg0, arg1)
 	ret0, _ := ret[0].(*proto.UserResponse)
@@ -185,7 +185,7 @@ func (mr *MockUserServiceServerMockRecorder) Get(arg0, arg1 interface{}) *gomock
 }
 
 // Update mocks base method.
-func (m *MockUserServiceServer) Update(arg0 context.Context, arg1 *proto.UpdateUserRequest) (*proto.UserResponse, error) {
+func (m *MockUserServiceServer) Update(arg0 context.Context, arg1 *proto.UserRequest) (*proto.UserResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", arg0, arg1)
 	ret0, _ := ret[0].(*proto.UserResponse)

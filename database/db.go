@@ -34,3 +34,14 @@ func DatabaseConnection() *gorm.DB {
 
 	return db
 }
+
+func GetUserByUsername(db *gorm.DB, username string) (*models.User, error) {
+	var user models.User
+	err := db.Where("username = ?", username).Find(&user).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
